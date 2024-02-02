@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Card.h"
 #include <vector>
+#include "Card.h"
 
 class Deck
 {
@@ -17,4 +17,3 @@ public:
 private:
 	std::vector<Card> m_cards;
 };
-
