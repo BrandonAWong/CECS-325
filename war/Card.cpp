@@ -9,11 +9,10 @@ Card::Card(char suit, char rank)
 
 void Card::display()
 {
-	std::cout << m_rank << m_suit;
+	std::cout << m_suit << m_rank;
 }
 	
 int Card::compare(Card)
 {
-	// not finished
-	std::cout <<"HIIH";
+	return 0;
 }

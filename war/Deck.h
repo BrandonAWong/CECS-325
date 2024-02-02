@@ -15,6 +15,6 @@ public:
 	void shuffle();
 
 private:
-	std::vector<Card> m_cards[52];
+	std::vector<Card> m_cards;
 };
 

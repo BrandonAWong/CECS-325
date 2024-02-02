@@ -4,10 +4,14 @@
 
 int main()
 {
-	std::cout << "Enter name of the first player: ";
+	std::cout << "Enter the name of the first player: ";
 	std::string p1 {};
 	std::cin >> p1;
+	std::cout << "Enter the name of the second player: ";
+	std::string p2 {};
+	std::cin >> p2;
 
-	std::cout << p1;
+	Deck deck {};
+	deck.display();
 }
 
