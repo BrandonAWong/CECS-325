@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include "Deck.h"
 
 Deck::Deck()
@@ -28,12 +30,18 @@ void Deck::display()
 			std::cout << ", ";
 		else
 			std::cout << '\n';
-			
 	}
-		
 }
 
 void Deck::shuffle()
 {
-	std::cout << "hi";
+	std::srand(std::time(0));
+	int j {};
+	for (std::size_t i {0}; i < m_cards.size(); ++i)
+	{
+		j = std::rand() % m_cards.size();
+		Card temp {m_cards[j]};
+		m_cards[j] = m_cards[i];
+		m_cards[i] = temp;
+	}
 }
