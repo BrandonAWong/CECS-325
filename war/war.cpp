@@ -1,3 +1,10 @@
+// Brandon Wong
+// CECS 325-02
+// Prog 1 - War
+//
+// I certify that this program is my own original work. I did not copy any part of this program from
+// any other source. I further certify that I typed each and every line of code in this program.
+
 #include <iostream>
 #include <string>
 #include "Deck.h"
@@ -6,10 +13,10 @@ int main()
 {
 	std::cout << "Enter the name of the first player: ";
 	std::string p1 {};
-	std::cin >> p1;
+    std::getline(std::cin >> std::ws, p1);
 	std::cout << "Enter the name of the second player: ";
 	std::string p2 {};
-	std::cin >> p2;
+    std::getline(std::cin >> std::ws, p2);
 
 	Deck deck {};
 	std::cout << "\n Original Deck\n";
