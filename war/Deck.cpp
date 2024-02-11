@@ -1,6 +1,7 @@
 // Brandon Wong
 // CECS 325-02
 // Prog 1 - War
+// Due 02/15/2024
 //
 // I certify that this program is my own original work. I did not copy any part of this program from
 // any other source. I further certify that I typed each and every line of code in this program.
@@ -28,12 +29,10 @@ Card Deck::deal()
 
 void Deck::display()
 {
-	int counter {0};
-	for (Card& card : m_cards)
+	for (std::size_t i {0}; i < m_cards.size(); ++i)
 	{
-		++counter;
-		card.display();
-		if (counter % 13)
+		m_cards[i].display();
+		if (i % 13)
 			std::cout << ", ";
 		else
 			std::cout << '\n';
