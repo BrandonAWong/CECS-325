@@ -18,26 +18,6 @@ public:
         : m_suit {suit} 
         , m_rank {rank}
     {
-        switch (m_rank)
-        {
-        case('A'):
-            m_val = 1;
-            break;
-        case('J'):
-            m_val = 11;
-            break;
-        case('Q'):
-            m_val = 12;
-            break;
-        case('K'):
-            m_val = 13; break;
-        case('T'): 
-            m_val = 10;
-            break;
-        default:
-            m_val = static_cast<int>(m_rank) - 48;
-            break;
-        }
     }
 
     void display()
@@ -50,13 +30,35 @@ public:
 
     int compare(Card other)
     {
-        if (m_val == other.m_val)
-            return 0;
-        return (m_val > other.m_val) ? 1 : -1;
+        int cardVals[2] ;
+        for (std::size_t i {0}; i < 2; ++i)
+        {
+            switch (!(i % 2) ? m_rank : other.m_rank)
+            {
+            case('A'):
+                cardVals[i] = 1;
+                break;
+            case('T'): 
+                cardVals[i] = 10;
+                break;
+            case('J'):
+                cardVals[i] = 11;
+                break;
+            case('Q'):
+                cardVals[i] = 12;
+                break;
+            case('K'):
+                cardVals[i] = 13;
+                break;
+            default:
+                cardVals[i] = ((!(i % 2)) ? m_rank : other.m_rank) - '0';
+                break;
+            }
+        } 
+        return (cardVals[0] == cardVals[1]) ? 0 : (cardVals[0] > cardVals[1]) ? 1 : -1;
     }
 
 private:
-    int m_val {};
     char m_suit {}; 
     char m_rank {};
 };
@@ -70,7 +72,7 @@ public:
         for (char suit : {'C', 'S', 'D', 'H'})
         {
             for (char rank : {'A', '2', '3','4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'})
-                m_cards[++i] = (Card(suit, rank));	
+                m_cards[i++] = (Card(suit, rank));	
         }
     }
 
@@ -78,15 +80,15 @@ public:
     {
         if (isEmpty()) 
             throw("Error - Deck is empty\n");
-        return m_cards[++index];
+        return m_cards[m_index++];
     }
 
     void display()
     {
-        for (std::size_t i {1}; i <= sizeof(m_cards) / sizeof(m_cards[0]); ++i)
+        for (std::size_t i {0}; i < sizeof(m_cards) / sizeof(m_cards[0]); ++i)
         {
             m_cards[i].display();
-            if (i % 13)
+            if ((i+1) % 13)
                 std::cout << ", ";
             else
                 std::cout << '\n';
@@ -97,7 +99,7 @@ public:
     {
         std::srand(std::time(0));
         int j {};
-        for (std::size_t i {0}; i <= sizeof(m_cards) / sizeof(m_cards[0]); ++i)
+        for (std::size_t i {0}; i < sizeof(m_cards) / sizeof(m_cards[0]); ++i)
         {
             j = std::rand() % (sizeof(m_cards) / sizeof(m_cards[0])); 
             Card temp {m_cards[j]};
@@ -108,12 +110,12 @@ public:
 
     bool isEmpty()
     {
-        return index - 1 > sizeof(m_cards) / sizeof(m_cards[0]);
+        return m_index > sizeof(m_cards) / sizeof(m_cards[0]) - 1;
     }
 
 private:
     Card m_cards[52];
-    int index {0};
+    std::size_t m_index {0};
 };
 
 int main()
@@ -121,8 +123,13 @@ int main()
 	Deck deck {};
     std::cout << "Enter the name of the first player: ";
     std::string p1 {};
-    std::getline(std::cin >> std::ws, p1); std::cout << "Enter the name of the second player: "; std::string p2 {}; std::getline(std::cin >> std::ws, p2); int rounds {};
-    std::cout << "How many gimes will they play? ";
+    std::getline(std::cin >> std::ws, p1);
+    std::cout << "Enter the name of the second player: ";
+    std::string p2 {}; 
+    std::getline(std::cin >> std::ws, p2);
+
+    int rounds {};
+    std::cout << "How many games will they play? ";
     std::cin >> rounds;
 
 	std::cout << "\n Original Deck\n";
@@ -137,8 +144,8 @@ int main()
 	int ties {0};
 	for (std::size_t i {0}; i < rounds; ++i)
 	{
-        Card cardP1 {Card()};
-        Card cardP2 {Card()};
+        Card cardP1 {};
+        Card cardP2 {};
         try
         {
             cardP1 = deck.deal();
@@ -175,6 +182,6 @@ int main()
 
 	std::cout << "------Final Stats-------\n\t" << p1 << " vs. " << p2 << 
 		"\nWins\t" << pointsP1 << '\t' << pointsP2 << "\nLosses\t" <<
-		std::min(26, rounds)-pointsP1 << '\t' << std::min(26, rounds)-pointsP2 << "\nTies\t" <<
+		std::min(26, rounds)-pointsP1-ties << '\t' << std::min(26, rounds)-pointsP2-ties << "\nTies\t" <<
 		ties << '\t' << ties <<'\n';
 }
