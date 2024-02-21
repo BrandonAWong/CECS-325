@@ -14,7 +14,7 @@
 class Card
 {
 public:
-    Card(char suit, char rank)
+    Card(char suit='X', char rank='X')
         : m_suit {suit} 
         , m_rank {rank}
     {
@@ -66,23 +66,24 @@ class Deck
 public:
     Deck()
     {
+        int i {0};
         for (char suit : {'C', 'S', 'D', 'H'})
         {
             for (char rank : {'A', '2', '3','4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'})
-                m_cards.push_back(Card(suit, rank));	
+                m_cards[++i] = (Card(suit, rank));	
         }
     }
 
     Card deal()
     {
-        Card top = m_cards[0]; 
-        m_cards.erase(m_cards.begin());
-        return top;
+        if (isEmpty()) 
+            throw("Error - Deck is empty\n");
+        return m_cards[++index];
     }
 
     void display()
     {
-        for (std::size_t i {0}; i < m_cards.size(); ++i)
+        for (std::size_t i {1}; i <= sizeof(m_cards) / sizeof(m_cards[0]); ++i)
         {
             m_cards[i].display();
             if (i % 13)
@@ -96,9 +97,9 @@ public:
     {
         std::srand(std::time(0));
         int j {};
-        for (std::size_t i {0}; i < m_cards.size(); ++i)
+        for (std::size_t i {0}; i <= sizeof(m_cards) / sizeof(m_cards[0]); ++i)
         {
-            j = std::rand() % m_cards.size();
+            j = std::rand() % (sizeof(m_cards) / sizeof(m_cards[0])); 
             Card temp {m_cards[j]};
             m_cards[j] = m_cards[i];
             m_cards[i] = temp;
@@ -107,22 +108,23 @@ public:
 
     bool isEmpty()
     {
-        return m_cards.empty();
+        return index - 1 > sizeof(m_cards) / sizeof(m_cards[0]);
     }
 
 private:
-    std::vector<Card> m_cards {};
+    Card m_cards[52];
+    int index {0};
 };
 
 int main()
 {
+	Deck deck {};
     std::cout << "Enter the name of the first player: ";
     std::string p1 {};
     std::getline(std::cin >> std::ws, p1); std::cout << "Enter the name of the second player: "; std::string p2 {}; std::getline(std::cin >> std::ws, p2); int rounds {};
     std::cout << "How many gimes will they play? ";
     std::cin >> rounds;
 
-	Deck deck {};
 	std::cout << "\n Original Deck\n";
 	deck.display();
 
@@ -135,8 +137,18 @@ int main()
 	int ties {0};
 	for (std::size_t i {0}; i < rounds; ++i)
 	{
-		Card cardP1 {deck.deal()};
-		Card cardP2 {deck.deal()};
+        Card cardP1 {Card()};
+        Card cardP2 {Card()};
+        try
+        {
+            cardP1 = deck.deal();
+            cardP2 = deck.deal();
+        }
+        catch(const char *e)
+        {
+            std::cout << e;
+            break;
+        }
 
 		std::cout << "Game " << i+1 << '\n' << "--------\n\t" << p1 << "=>";
 		cardP1.display();
@@ -163,6 +175,6 @@ int main()
 
 	std::cout << "------Final Stats-------\n\t" << p1 << " vs. " << p2 << 
 		"\nWins\t" << pointsP1 << '\t' << pointsP2 << "\nLosses\t" <<
-		rounds-pointsP1 << '\t' << rounds-pointsP2 << "\nTies\t" <<
+		std::min(26, rounds)-pointsP1 << '\t' << std::min(26, rounds)-pointsP2 << "\nTies\t" <<
 		ties << '\t' << ties <<'\n';
 }
