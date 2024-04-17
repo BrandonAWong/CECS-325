@@ -3,6 +3,7 @@
 #include <vector>
 #include <ctime>
 
+int globalSwapCount {0};
 class Bucket {
     public:
         Bucket() { }
@@ -21,6 +22,7 @@ class Bucket {
                         temp = v[i];
                         v[i] = v[j];
                         v[j] = temp;
+                        ++globalSwapCount;
                     }
             }
         }
@@ -30,30 +32,27 @@ class Bucket {
         int atIndex(int i) { return v[i]; }
 
         void merge(Bucket b) {
-            int temp[size()+b.size()];
-                std::size_t i {0}, currentIndex1 {0}, currentIndex2 {0};
-                while (currentIndex1 < size() && currentIndex2 < b.size())
-                {
-                    temp[i++] =  (v[currentIndex1] < b.v[currentIndex2]) ? v[currentIndex1++] : b.v[currentIndex2++];
-                }
-                while (currentIndex1 < size())
-                    temp[i++] =  v[currentIndex1++];
-                while (currentIndex2 < b.size())
-                    temp[i++] =  b.v[currentIndex2++];
+            int temp[size() + b.size()];
+            std::size_t i {0}, currentIndex1 {0}, currentIndex2 {0};
+            while (currentIndex1 < size() && currentIndex2 < b.size())
+                temp[i++] = (v[currentIndex1] < b.v[currentIndex2]) ? v[currentIndex1++] : b.v[currentIndex2++];
+            while (currentIndex1 < size())
+                temp[i++] =  v[currentIndex1++];
+            while (currentIndex2 < b.size())
+                temp[i++] =  b.v[currentIndex2++];
 
-                for (std::size_t i {0}; i < size()+b.size(); ++i) {
-                    if (i < size())
-                       v[i] = temp[i]; 
-                    else
-                        v.push_back(temp[i]);
-                }
+            for (std::size_t i {0}; i < sizeof(temp)/sizeof(temp[i]); ++i) {
+                if (i < size())
+                   v[i] = temp[i]; 
+                else
+                    v.push_back(temp[i]);
+            }
         }
 
     private:
         std::vector<int> v;
 };
 
-int globalSwapCount {0};
 int main(int argc, char *argv[])
 {
     std::srand(std::time(0));
@@ -81,7 +80,6 @@ int main(int argc, char *argv[])
     Bucket endGame; // create empty Bucket to merge ALL buckets
     while (list.size() > 0) // std::vector<Bucket>::size()
     {
-        std::cout << "yo\n";
         endGame.merge(list[0]); // merge first bucket in list into endGame
         list.erase(list.begin()); // erase the first bucket in the list
     }
